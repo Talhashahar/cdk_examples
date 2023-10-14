@@ -11,7 +11,7 @@ class LambdaConstruct(Construct):
 
     def __init__(self, scope: Construct, id: str, env_vars: dict, lambda_name: str, handler_path: str,
                  aws_role: iam.Role = None, python_version: str = "python3.10",
-                 code_location: str = "path/to/lambda/code", schedule_expression: str = None, **kwargs) -> None:
+                 code_location: str = "handler.lambda_handler", schedule_expression: str = None, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
         if aws_role is None:

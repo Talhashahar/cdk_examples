@@ -6,7 +6,7 @@ from cdk_examples.constructs.lambda_construct import LambdaConstruct
 from cdk_examples.constructs.role_construct import RoleConstruct
 from cdk_examples.constructs.s3_constrcut import S3BucketConstruct
 from cdk_examples.constructs.dynamodb_constrcut import DynamodbConstruct
-from cdk_examples.consts import BUCKET_NAME, DYNAMODB_TABLE_NAME
+from cdk_examples.consts import BUCKET_NAME, DYNAMODB_TABLE_NAME, CRON_PATTERN
 
 
 class CdkExamplesStack(Stack):
@@ -16,7 +16,7 @@ class CdkExamplesStack(Stack):
 
         self._create_bucket()
         self._create_ddb_table()
-        self._create_lambda(lambda_name="first_lambda", lambda_path="handler.lambda_handler")
+        self._create_lambda(lambda_name="first_lambda", lambda_path="handler.lambda_handler", schedule_expression=CRON_PATTERN)
         self._create_lambda(lambda_name="second_lambda", lambda_path="handler.lambda_handler")
 
     def _create_bucket(self):
@@ -27,7 +27,7 @@ class CdkExamplesStack(Stack):
     def _create_ddb_table(self):
         self.table = DynamodbConstruct(self, DYNAMODB_TABLE_NAME, table_name=DYNAMODB_TABLE_NAME)
 
-    def _create_lambda(self, lambda_name: str, lambda_path: str):
+    def _create_lambda(self, lambda_name: str, lambda_path: str, schedule_expression: str = None):
         lambda_role = RoleConstruct(
             self,
             f"{lambda_name}LambdaRole",
@@ -58,9 +58,9 @@ class CdkExamplesStack(Stack):
             self,
             f"{lambda_name}LambdaFunction",
             env_vars={"BUCKET_ARN": self.bucket.bucket.bucket_arn, "BUCKET_NAME": BUCKET_NAME},
-            # Replace with your environment variables
             lambda_name=lambda_name,
-            handler_path=lambda_path,  # Replace with your Lambda handler path
+            handler_path=lambda_path,
             aws_role=lambda_role.role,
-            code_location=f"lambdas/{lambda_name}/",  # Replace with your code location
+            code_location=f"lambdas/{lambda_name}/",
+            schedule_expression=schedule_expression
         )
