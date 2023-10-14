@@ -7,11 +7,11 @@ from aws_cdk import RemovalPolicy
 
 class S3BucketConstruct(Construct):
 
-    def __init__(self, scope: Construct, id: str, bucket_name: str = None, **kwargs):
+    def __init__(self, scope: Construct, id: str, bucket_name, **kwargs):
         super().__init__(scope, id, **kwargs)
 
         # Define the S3 bucket
-        self.bucket_name = bucket_name if bucket_name else "exmaplebucketnameth"
+        self.bucket_name = bucket_name
         self.bucket = s3.Bucket(self, self.bucket_name, bucket_name=self.bucket_name,
                                 block_public_access=BlockPublicAccess.BLOCK_ALL,
                                 access_control=BucketAccessControl.PRIVATE,

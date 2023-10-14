@@ -11,7 +11,7 @@ class RoleConstruct(Construct):
 
         self.role_name = role_name
         # Define the IAM role for the Lambda function
-        self.lambda_role = iam.Role(
+        self.role = iam.Role(
             self,
             f"{role_name}Role",
             assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"),
@@ -20,13 +20,13 @@ class RoleConstruct(Construct):
 
         if custom_policies:
             for policy in custom_policies:
-                self.lambda_role.add_to_policy(policy)
+                self.role.add_to_policy(policy)
 
         # Output the IAM role ARN
         CfnOutput(
             self,
             "LambdaRoleArn",
-            value=self.lambda_role.role_arn,
+            value=self.role.role_arn,
             description="Lambda Execution Role ARN",
         )
 
@@ -35,14 +35,14 @@ class RoleConstruct(Construct):
         # Allow creating log groups with the Lambda name
         log_group_pattern = f"/aws/lambda/{self.role_name}"
         log_group_arn = f"arn:aws:logs:{core.Aws.REGION}:{core.Aws.ACCOUNT_ID}:log-group:{log_group_pattern}:*"
-        self.lambda_role.add_to_policy(
+        self.role.add_to_policy(
             iam.PolicyStatement(
                 actions=["logs:CreateLogGroup"],
                 resources=[log_group_arn],
             )
         )
 
-        self.lambda_role.add_to_policy(
+        self.role.add_to_policy(
             iam.PolicyStatement(
                 actions=["logs:CreateLogStream", "logs:PutLogEvents"],
                 resources=[f"{log_group_arn}:*"],
