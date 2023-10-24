@@ -6,6 +6,7 @@ from cdk_examples.constructs.lambda_construct import LambdaConstruct
 from cdk_examples.constructs.role_construct import RoleConstruct
 from cdk_examples.constructs.s3_constrcut import S3BucketConstruct
 from cdk_examples.constructs.dynamodb_constrcut import DynamodbConstruct
+from cdk_examples.constructs.cicd_construct import CodePipelineStack
 from cdk_examples.consts import BUCKET_NAME, DYNAMODB_TABLE_NAME, CRON_PATTERN
 
 
@@ -14,10 +15,13 @@ class CdkExamplesStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        self._create_bucket()
-        self._create_ddb_table()
-        self._create_lambda(lambda_name="first_lambda", lambda_path="handler.lambda_handler", schedule_expression=CRON_PATTERN)
-        self._create_lambda(lambda_name="second_lambda", lambda_path="handler.lambda_handler")
+        # self._create_bucket()
+        # self._create_ddb_table()
+        # self._create_lambda(lambda_name="first_lambda", lambda_path="handler.lambda_handler", schedule_expression=CRON_PATTERN)
+        # self._create_lambda(lambda_name="second_lambda", lambda_path="handler.lambda_handler")
+
+    def _create_cicd_stack(self):
+        self.cicdstack = CodePipelineStack()
 
     def _create_bucket(self):
         self.bucket = S3BucketConstruct(self,
