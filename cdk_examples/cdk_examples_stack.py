@@ -21,7 +21,7 @@ class CdkExamplesStack(Stack):
         # self._create_lambda(lambda_name="second_lambda", lambda_path="handler.lambda_handler")
 
     def _create_cicd_stack(self):
-        self.cicdstack = CodePipelineStack()
+        self.cicdstack = CodePipelineStack(self, "cicdtempstack")
 
     def _create_bucket(self):
         self.bucket = S3BucketConstruct(self,
