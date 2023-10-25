@@ -13,25 +13,25 @@ from constructs import Construct
 
 
 class CodePipelineStack(Stack):
-    def __init__(self, scope: Construct, id: str, **kwargs) -> None:
+    def __init__(self, scope: Construct, id: str, project_name: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
         # Create a CodeCommit repository
         code_repo = codecommit.Repository(
             self,
-            "cicdtemp",
-            repository_name="cicdtemp"
+            f"{project_name}Repo",
+            repository_name=project_name
         )
 
         # Create a CodeBuild project for installing requirements and running cdk deploy
         build_project = codebuild.PipelineProject(
             self,
-            "cicdtempProject",
+            f"{project_name}Project",
             build_spec=codebuild.BuildSpec.from_object({
                 "version": "0.2",
                 "phases": {
                     "install": {
-                        "commands": ["pip install -r requirements.txt"]
+                        "commands": ["pip install -r requirements.txt", "npm install -g aws-cdk"]
                     },
                     "build": {
                         "commands": ["cdk deploy"]
@@ -43,7 +43,7 @@ class CodePipelineStack(Stack):
         # Define a CodePipeline
         pipeline = codepipeline.Pipeline(
             self,
-            "MyCodePipeline",
+            f"{project_name}Pipeline",
         )
 
         # Add stages to the CodePipeline
@@ -77,7 +77,7 @@ class CodePipelineStack(Stack):
         assume_role = iam.Role(
             self,
             "CrossAccountDeploymentRole",
-            assumed_by=iam.AccountPrincipal("PROD_ACCOUNT_ID"),
+            assumed_by=iam.AccountPrincipal("652380775390"),
         )
 
         # Add a new "deployToProd" stage with the assumed role
@@ -85,7 +85,7 @@ class CodePipelineStack(Stack):
             action_name="DeployToProd",
             project=build_project,
             input=source_output,
-            outputs=[build_output],
+            # outputs=[build_output],
             role=assume_role,
         )
 
@@ -109,6 +109,3 @@ class CodePipelineStack(Stack):
         codecommit_rule.add_target(
             targets.CodePipeline(pipeline),
         )
-
-
-        # You can add more stages to the pipeline if needed.

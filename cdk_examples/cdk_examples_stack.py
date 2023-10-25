@@ -15,13 +15,16 @@ class CdkExamplesStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
+        self.cicdstack = None
+        self._create_cicd_stack()
+        # print(self.cicdstack)
         # self._create_bucket()
         # self._create_ddb_table()
         # self._create_lambda(lambda_name="first_lambda", lambda_path="handler.lambda_handler", schedule_expression=CRON_PATTERN)
         # self._create_lambda(lambda_name="second_lambda", lambda_path="handler.lambda_handler")
 
     def _create_cicd_stack(self):
-        self.cicdstack = CodePipelineStack(self, "cicdtempstack")
+        self.cicdstack = CodePipelineStack(self, "cicdteststack", "cicdtest")
 
     def _create_bucket(self):
         self.bucket = S3BucketConstruct(self,

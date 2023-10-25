@@ -7,7 +7,6 @@ from cdk_examples.cdk_examples_stack import CdkExamplesStack
 
 
 app = cdk.App()
-CdkExamplesStack(app, "CdkExamplesStack",
-    )
+CdkExamplesStack(app, "CdkExamplesStack")
 
 app.synth()
